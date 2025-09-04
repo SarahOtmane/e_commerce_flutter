@@ -6,9 +6,12 @@ import 'pages/home_page.dart';
 import 'pages/second_page.dart';
 import 'pages/register_page.dart';
 import 'pages/login_page.dart';
+import 'utils/get_products.dart';
+import 'pages/catalogue_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await fetchAndStoreProducts();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -33,6 +36,7 @@ class MyApp extends StatelessWidget {
         '/second': (_) => const SecondPage(),
         '/register': (_) => const RegisterPage(),
         '/login': (_) => const LoginPage(),
+        '/catalog': (_) => const CataloguePage(),
       },
     );
   }
