@@ -95,23 +95,24 @@ class _CataloguePageState extends State<CataloguePage> {
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 12),
-                                          child: product['image'] != null
-                                              ? Image.network(
-                                                  product['image'],
-                                                  width: 80,
-                                                  height: 80,
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : const SizedBox(height: 80),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.pushNamed(
+                                                context,
+                                                '/product/${product['id']}',
+                                                arguments: product,
+                                              );
+                                            },
+                                            child: product['image'] != null
+                                                ? Image.network(
+                                                    product['image'],
+                                                    width: 80,
+                                                    height: 80,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : const SizedBox(height: 80),
+                                          ),
                                         ),
-                                        // Text(product['title'] ?? '',
-                                        //     style:
-                                        //         const TextStyle(fontSize: 14),
-                                        //     maxLines: 2,
-                                        //     overflow: TextOverflow.ellipsis),
-                                        // Text('${product['price'] ?? ''} €',
-                                        //     style: const TextStyle(
-                                        //         fontWeight: FontWeight.bold)),
                                       ],
                                     ),
                                   ),
