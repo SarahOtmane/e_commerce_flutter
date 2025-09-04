@@ -8,6 +8,7 @@ import 'pages/register_page.dart';
 import 'pages/login_page.dart';
 import 'utils/get_products.dart';
 import 'pages/catalogue_page.dart';
+import 'pages/product_detail_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +38,18 @@ class MyApp extends StatelessWidget {
         '/register': (_) => const RegisterPage(),
         '/login': (_) => const LoginPage(),
         '/catalog': (_) => const CataloguePage(),
+        '/product/:id': (_) => const ProductDetailPage(
+              product: {},
+            ),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name != null && settings.name!.startsWith('/product/')) {
+          final product = settings.arguments as Map<String, dynamic>?;
+          return MaterialPageRoute(
+            builder: (_) => ProductDetailPage(product: product ?? {}),
+          );
+        }
+        return null;
       },
     );
   }
