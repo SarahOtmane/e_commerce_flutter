@@ -9,6 +9,7 @@ import 'pages/login_page.dart';
 import 'utils/get_products.dart';
 import 'pages/catalogue_page.dart';
 import 'pages/product_detail_page.dart';
+import 'pages/cart_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         '/product/:id': (_) => const ProductDetailPage(
               product: {},
             ),
+        '/cart': (_) => const CartPage(),
       },
       onGenerateRoute: (settings) {
         if (settings.name != null && settings.name!.startsWith('/product/')) {
