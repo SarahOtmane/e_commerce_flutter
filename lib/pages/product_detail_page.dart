@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../utils/cart_cache.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -12,7 +14,19 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   int _quantity = 1;
 
   void _addToCart() {
-    // Ici tu peux ajouter la logique d'ajout au panier
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Vous devez vous connecter pour ajouter au panier.')),
+      );
+      Future.delayed(const Duration(milliseconds: 500), () {
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacementNamed(context, '/login');
+      });
+      return;
+    }
+    addToCart(widget.product, _quantity);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           content: Text(
