@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1049729394052",
+    "project_id": "e-commerce-bbc53",
+    "storage_bucket": "e-commerce-bbc53.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1049729394052:android:2387aa5760ca6620fc29d1",
+        "android_client_info": {
+          "package_name": "com.example.e_commerce"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2yChls-t40LfCBQQmDeUxc3CuFN9YOPk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
