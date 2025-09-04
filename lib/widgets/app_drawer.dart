@@ -69,6 +69,10 @@ class AppDrawer extends StatelessWidget {
               onTap: () => _go(context, '/second'),
             ),
             ListTile(
+              title: const Text('Panier'),
+              onTap: () => _go(context, '/cart'),
+            ),
+            ListTile(
               title: const Text('Déconnexion'),
               onTap: () => _signOut(context),
             ),
