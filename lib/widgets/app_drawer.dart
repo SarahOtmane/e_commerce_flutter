@@ -82,6 +82,10 @@ class AppDrawer extends StatelessWidget {
               onTap: () => _go(context, '/login'),
             ),
           ],
+          ListTile(
+            title: const Text('Catalogue page'),
+            onTap: () => _go(context, '/catalog'),
+          ),
         ],
       ),
     );
