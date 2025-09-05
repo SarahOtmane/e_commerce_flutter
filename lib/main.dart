@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
+import 'package:provider/provider.dart';
+import 'viewmodels/cart_view_model.dart';
+import 'models/product.dart';
 import 'pages/home_page.dart';
 import 'pages/register_page.dart';
 import 'pages/login_page.dart';
@@ -21,7 +24,12 @@ void main() async {
   // Utilise la clé Stripe du .env
   Stripe.publishableKey = dotenv.env['publishableKey']!;
   await Stripe.instance.applySettings();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CartViewModel(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -43,16 +51,16 @@ class MyApp extends StatelessWidget {
         '/register': (_) => const RegisterPage(),
         '/login': (_) => const LoginPage(),
         '/catalog': (_) => const CataloguePage(),
-        '/product/:id': (_) => const ProductDetailPage(
-              product: {},
-            ),
         '/cart': (_) => const CartPage(),
       },
       onGenerateRoute: (settings) {
         if (settings.name != null && settings.name!.startsWith('/product/')) {
-          final product = settings.arguments as Map<String, dynamic>?;
+          final product = settings.arguments as Product?;
+          if (product == null) {
+            return null;
+          }
           return MaterialPageRoute(
-            builder: (_) => ProductDetailPage(product: product ?? {}),
+            builder: (_) => ProductDetailPage(product: product),
           );
         }
         return null;
