@@ -10,6 +10,8 @@ import 'dart:convert';
 import '../widgets/app_drawer.dart';
 import '../viewmodels/cart_view_model.dart';
 import 'package:provider/provider.dart';
+import '../models/order.dart';
+import '../services/order_service.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -51,8 +53,19 @@ class _CartPageState extends State<CartPage> {
       );
       await stripe.Stripe.instance.presentPaymentSheet();
 
+      // Création et sauvegarde de la commande locale
+      final order = Order(
+        items: cartViewModel.items
+            .map((e) => OrderItem(product: e.product, quantity: e.quantity))
+            .toList(),
+        total: cartViewModel.total,
+        date: DateTime.now(),
+      );
+      await OrderService().saveOrder(order);
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Paiement réussi !')),
+        const SnackBar(
+            content: Text('Paiement réussi ! Commande enregistrée.')),
       );
       cartViewModel.clear();
     } catch (e) {
