@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/cart_cache.dart';
+import '../services/cart_cache.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProductDetailPage extends StatefulWidget {

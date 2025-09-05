@@ -1,7 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import '../widgets/app_drawer.dart';
-import '../utils/cart_cache.dart';
+import '../services/cart_cache.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -11,6 +18,73 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  Future<void> _onPayPressed() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vous devez être connecté pour payer.')),
+      );
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.pushReplacementNamed(context, '/login');
+      });
+      return;
+    }
+
+    try {
+      final clientSecret = await _createPaymentIntent(_total);
+
+      if (clientSecret == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Erreur lors de la création du paiement')),
+        );
+        return;
+      }
+
+      await stripe.Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: stripe.SetupPaymentSheetParameters(
+          paymentIntentClientSecret: clientSecret,
+          merchantDisplayName: 'Mon E-commerce',
+        ),
+      );
+      await stripe.Stripe.instance.presentPaymentSheet();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Paiement réussi !')),
+      );
+      setState(() {
+        cartCache.clear();
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur paiement : $e')),
+      );
+    }
+  }
+
+  Future<String?> _createPaymentIntent(double amount) async {
+    final secretKey = dotenv.env['secretKey']?.replaceAll("'", '');
+    final url = Uri.parse('https://api.stripe.com/v1/payment_intents');
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $secretKey',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'amount': (amount * 100).toInt().toString(), // en centimes
+        'currency': 'eur',
+      },
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['client_secret'];
+    } else {
+      print('Erreur Stripe: ${response.body}');
+      return null;
+    }
+  }
+
   void _removeItem(int index) {
     setState(() {
       cartCache.removeAt(index);
@@ -109,21 +183,12 @@ class _CartPageState extends State<CartPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: cartCache.isEmpty
-                              ? null
-                              : () {
-                                  // Action de paiement à définir
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content:
-                                            Text('Paiement non implémenté')),
-                                  );
-                                },
-                          child: const Text('Payer'),
+                          onPressed: cartCache.isEmpty ? null : _onPayPressed,
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             textStyle: const TextStyle(fontSize: 16),
                           ),
+                          child: const Text('Payer'),
                         ),
                       ),
                     ],
@@ -134,3 +199,4 @@ class _CartPageState extends State<CartPage> {
     );
   }
 }
+

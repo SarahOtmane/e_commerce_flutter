@@ -34,6 +34,8 @@ dependencies:
   firebase_auth: ^6.0.2
   http: ^1.5.0
   path_provider: ^2.1.5
+  flutter_stripe: ^12.0.2
+  flutter_dotenv: ^6.0.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -56,6 +58,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - .env
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
