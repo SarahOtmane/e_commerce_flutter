@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/app_drawer.dart';
-import '../utils/get_products.dart';
+import '../services/get_products.dart';
 
 class CataloguePage extends StatefulWidget {
   const CataloguePage({super.key});
