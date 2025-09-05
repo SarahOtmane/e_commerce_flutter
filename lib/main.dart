@@ -6,10 +6,11 @@ import 'pages/home_page.dart';
 import 'pages/second_page.dart';
 import 'pages/register_page.dart';
 import 'pages/login_page.dart';
-import 'utils/get_products.dart';
+import 'services/get_products.dart';
 import 'pages/catalogue_page.dart';
 import 'pages/product_detail_page.dart';
 import 'pages/cart_page.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +18,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // Initialise la clé publique Stripe (remplace par ta vraie clé pk_test...)
+  Stripe.publishableKey =
+      'pk_test_51S3jeAL63amYurnI7WcD9UXZ9yYlYtb4Uz7X3t3zMEDJv4z4mqlJ1StgVxHk7p46bSw1j6YOAuogPRNRXhbElvLg002eFzgKzv';
+  await Stripe.instance.applySettings();
   runApp(const MyApp());
 }
 
