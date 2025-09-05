@@ -12,6 +12,7 @@ import 'services/get_products.dart';
 import 'pages/catalogue_page.dart';
 import 'pages/product_detail_page.dart';
 import 'pages/cart_page.dart';
+import 'pages/profile_page.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() async {
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         '/login': (_) => const LoginPage(),
         '/catalog': (_) => const CataloguePage(),
         '/cart': (_) => const CartPage(),
+        '/profile': (_) => const ProfilePage(),
       },
       onGenerateRoute: (settings) {
         if (settings.name != null && settings.name!.startsWith('/product/')) {
