@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
 import 'pages/home_page.dart';
 import 'pages/second_page.dart';
@@ -14,13 +14,13 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await fetchAndStoreProducts();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // Initialise la clé publique Stripe (remplace par ta vraie clé pk_test...)
-  Stripe.publishableKey =
-      'pk_test_51S3jeAL63amYurnI7WcD9UXZ9yYlYtb4Uz7X3t3zMEDJv4z4mqlJ1StgVxHk7p46bSw1j6YOAuogPRNRXhbElvLg002eFzgKzv';
+  // Utilise la clé Stripe du .env
+  Stripe.publishableKey = dotenv.env['publishableKey']!;
   await Stripe.instance.applySettings();
   runApp(const MyApp());
 }
@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('MyApp build called');
     return MaterialApp(
       title: 'Demo Drawer',
       debugShowCheckedModeBanner: false,
