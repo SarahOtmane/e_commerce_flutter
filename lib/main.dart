@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
 import 'pages/home_page.dart';
-import 'pages/second_page.dart';
 import 'pages/register_page.dart';
 import 'pages/login_page.dart';
 import 'services/get_products.dart';
@@ -41,7 +40,6 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (_) => const HomePage(),
-        '/second': (_) => const SecondPage(),
         '/register': (_) => const RegisterPage(),
         '/login': (_) => const LoginPage(),
         '/catalog': (_) => const CataloguePage(),
