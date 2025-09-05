@@ -30,66 +30,85 @@ class AppDrawer extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
 
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(color: Colors.blue),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Mon App',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
+      child: Stack(
+        children: <Widget>[
+          ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                decoration: const BoxDecoration(color: Colors.blue),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Mon App',
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
+                    const SizedBox(height: 10),
+                    if (user != null) ...[
+                      const Icon(Icons.account_circle,
+                          color: Colors.white, size: 40),
+                      const SizedBox(height: 5),
+                      Text(
+                        user.email ?? 'Utilisateur connecté',
+                        style: const TextStyle(
+                            color: Colors.white70, fontSize: 14),
+                      ),
+                    ] else
+                      const Text(
+                        'Non connecté',
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                      ),
+                  ],
                 ),
-                const SizedBox(height: 10),
-                if (user != null) ...[
-                  const Icon(Icons.account_circle,
-                      color: Colors.white, size: 40),
-                  const SizedBox(height: 5),
-                  Text(
-                    user.email ?? 'Utilisateur connecté',
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
-                ] else
-                  const Text(
-                    'Non connecté',
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                  ),
+              ),
+              if (user != null) ...[
+                ListTile(
+                  leading: const Icon(Icons.home),
+                  title: const Text('Accueil'),
+                  onTap: () => _go(context, '/'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.storefront),
+                  title: const Text('Boutique'),
+                  onTap: () => _go(context, '/catalog'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.shopping_cart),
+                  title: const Text('Panier'),
+                  onTap: () => _go(context, '/cart'),
+                ),
+              ] else ...[
+                ListTile(
+                  leading: const Icon(Icons.person_add),
+                  title: const Text('Créer un compte'),
+                  onTap: () => _go(context, '/register'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.login),
+                  title: const Text('Connexion'),
+                  onTap: () => _go(context, '/login'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.storefront),
+                  title: const Text('Boutique'),
+                  onTap: () => _go(context, '/catalog'),
+                ),
               ],
-            ),
+            ],
           ),
-          if (user != null) ...[
-            ListTile(
-              title: const Text('Accueil'),
-              onTap: () => _go(context, '/'),
+          if (user != null)
+            Positioned(
+              left: 5,
+              right: 0,
+              bottom: 30,
+              child: ListTile(
+                leading: const Icon(Icons.logout, color: Colors.red),
+                title: const Text('Déconnexion',
+                    style: TextStyle(color: Colors.red)),
+                onTap: () => _signOut(context),
+              ),
             ),
-            ListTile(
-              title: const Text('Seconde page'),
-              onTap: () => _go(context, '/second'),
-            ),
-            ListTile(
-              title: const Text('Panier'),
-              onTap: () => _go(context, '/cart'),
-            ),
-            ListTile(
-              title: const Text('Déconnexion'),
-              onTap: () => _signOut(context),
-            ),
-          ] else ...[
-            ListTile(
-              title: const Text('Register page'),
-              onTap: () => _go(context, '/register'),
-            ),
-            ListTile(
-              title: const Text('Login page'),
-              onTap: () => _go(context, '/login'),
-            ),
-          ],
-          ListTile(
-            title: const Text('Catalogue page'),
-            onTap: () => _go(context, '/catalog'),
-          ),
         ],
       ),
     );
