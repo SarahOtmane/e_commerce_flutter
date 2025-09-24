@@ -27,6 +27,8 @@ class OrderItem {
 
   OrderItem({required this.product, required this.quantity});
 
+  double get subtotal => product.price * quantity;
+
   Map<String, dynamic> toJson() => {
         'product': product.toJson(),
         'quantity': quantity,
