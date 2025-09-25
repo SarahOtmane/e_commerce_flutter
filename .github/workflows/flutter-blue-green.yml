@@ -1,0 +1,91 @@
+name: Flutter CI/CD → Firebase Blue-Green
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "stable"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test --coverage
+
+      - name: Build Flutter Web
+        run: flutter build web --release
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web
+
+  deploy-blue-green:
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-build
+          path: build/web
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy to inactive site
+        id: deploy
+        run: |
+          CURRENT_DEFAULT=$(firebase hosting:sites:list --project ${{ secrets.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }} | grep default | awk '{print $1}')
+          echo "Current default site: $CURRENT_DEFAULT"
+
+          if [ "$CURRENT_DEFAULT" = "${{ secrets.FIREBASE_SITE_BLUE }}" ]; then
+            TARGET="${{ secrets.FIREBASE_SITE_GREEN }}"
+          else
+            TARGET="${{ secrets.FIREBASE_SITE_BLUE }}"
+          fi
+
+          echo "Deploying to inactive site: $TARGET"
+          firebase deploy \
+            --only hosting:$TARGET \
+            --project ${{ secrets.FIREBASE_PROJECT_ID }} \
+            --token ${{ secrets.FIREBASE_TOKEN }}
+
+          echo "target=$TARGET" >> $GITHUB_OUTPUT
+
+      - name: Smoke test new deployment
+        run: |
+          TARGET=${{ steps.deploy.outputs.target }}
+          URL="https://${TARGET}.web.app"
+          echo "Running smoke test on $URL"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" $URL)
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Smoke test failed (status $STATUS). Aborting switch."
+            exit 1
+          else
+            echo "Smoke test passed ✅"
+          fi
+
+      - name: Switch alias to new site
+        run: |
+          TARGET=${{ steps.deploy.outputs.target }}
+          echo "Switching default hosting site to $TARGET"
+          firebase hosting:sites:update $TARGET --default \
+            --project ${{ secrets.FIREBASE_PROJECT_ID }} \
+            --token ${{ secrets.FIREBASE_TOKEN }}
