@@ -14,6 +14,7 @@ import 'pages/product_detail_page.dart';
 import 'pages/cart_page.dart';
 import 'pages/profile_page.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,9 +23,12 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // Utilise la clé Stripe du .env
-  Stripe.publishableKey = dotenv.env['publishableKey']!;
-  await Stripe.instance.applySettings();
+
+  // Initialiser Stripe seulement sur les plateformes supportées (pas sur le web)
+  if (!kIsWeb) {
+    Stripe.publishableKey = dotenv.env['publishableKey']!;
+    await Stripe.instance.applySettings();
+  }
   runApp(
     ChangeNotifierProvider(
       create: (_) => CartViewModel(),
