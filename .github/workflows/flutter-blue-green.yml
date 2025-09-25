@@ -2,9 +2,9 @@ name: Flutter CI/CD → Firebase Blue-Green
 
 on:
   push:
-    branches: [main, dev]
+    branches: [dev, main]
   pull_request:
-    branches: [main, dev]
+    branches: [dev, main]
 
 jobs:
   build-test:
@@ -16,7 +16,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "stable"
+          flutter-version: "3.24.3"
 
       - name: Install dependencies
         run: flutter pub get
@@ -38,6 +38,7 @@ jobs:
 
   deploy-blue-green:
     needs: build-test
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -79,7 +80,7 @@ jobs:
             echo "Smoke test failed (status $STATUS). Aborting switch."
             exit 1
           else
-            echo "Smoke test passed ✅"
+            echo "Smoke test passed "
           fi
 
       - name: Switch alias to new site
