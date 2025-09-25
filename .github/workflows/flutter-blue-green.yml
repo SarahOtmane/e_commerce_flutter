@@ -18,6 +18,22 @@ jobs:
         with:
           flutter-version: "3.35.4"
 
+      - name: Create .env file
+        run: |
+          cat > .env <<EOF
+          publishableKey=${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+          secretKey=${{ secrets.STRIPE_SECRET_KEY }}
+
+          FIREBASE_API_KEY_WEB=${{ secrets.FIREBASE_API_KEY_WEB }}
+          FIREBASE_APP_ID_WEB=${{ secrets.FIREBASE_APP_ID_WEB }}
+          FIREBASE_MESSAGING_SENDER_ID_WEB=${{ secrets.FIREBASE_MESSAGING_SENDER_ID_WEB }}
+          FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_AUTH_DOMAIN_WEB=${{ secrets.FIREBASE_AUTH_DOMAIN_WEB }}
+          FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          FIREBASE_MEASUREMENT_ID_WEB=${{ secrets.FIREBASE_MEASUREMENT_ID_WEB }}
+          EOF
+          echo ".env created with $(wc -l < .env) lines"
+
       - name: Install dependencies
         run: flutter pub get
 
