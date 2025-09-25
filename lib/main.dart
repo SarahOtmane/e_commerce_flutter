@@ -42,7 +42,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('MyApp build called');
     return MaterialApp(
       title: 'Demo Drawer',
       debugShowCheckedModeBanner: false,
