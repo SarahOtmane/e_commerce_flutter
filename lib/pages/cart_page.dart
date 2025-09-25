@@ -93,7 +93,7 @@ class _CartPageState extends State<CartPage> {
       final data = json.decode(response.body);
       return data['client_secret'];
     } else {
-      print('Erreur Stripe: ${response.body}');
+      // Erreur Stripe - pas de print en production
       return null;
     }
   }

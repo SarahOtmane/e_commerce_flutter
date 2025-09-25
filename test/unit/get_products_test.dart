@@ -214,7 +214,7 @@ void main() {
     test('Gère les réponses JSON malformées', () async {
       expect(() {
         // Simuler une réponse JSON invalide
-        final invalidJson = '{"invalid": json}';
+        const invalidJson = '{"invalid": json}';
         jsonDecode(invalidJson);
       }, throwsFormatException);
     });

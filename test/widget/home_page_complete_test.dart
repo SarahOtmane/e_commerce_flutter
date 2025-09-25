@@ -5,7 +5,7 @@ import 'package:e_commerce/viewmodels/cart_view_model.dart';
 
 // Page d'accueil simplifiée pour les tests (sans dépendances externes)
 class TestHomePage extends StatelessWidget {
-  const TestHomePage({Key? key}) : super(key: key);
+  const TestHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +101,7 @@ class TestHomePage extends StatelessWidget {
 
 // Pages simples pour les tests
 class TestCataloguePage extends StatelessWidget {
-  const TestCataloguePage({Key? key}) : super(key: key);
+  const TestCataloguePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +112,7 @@ class TestCataloguePage extends StatelessWidget {
 }
 
 class TestCartPage extends StatelessWidget {
-  const TestCartPage({Key? key}) : super(key: key);
+  const TestCartPage({super.key});
 
   @override
   Widget build(BuildContext context) {

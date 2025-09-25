@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Product product;
-  const ProductDetailPage({Key? key, required this.product}) : super(key: key);
+  const ProductDetailPage({super.key, required this.product});
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -23,7 +23,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             content: Text('Vous devez vous connecter pour ajouter au panier.')),
       );
       Future.delayed(const Duration(milliseconds: 500), () {
-        Navigator.pushReplacementNamed(context, '/login');
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/login');
+        }
       });
       return;
     }

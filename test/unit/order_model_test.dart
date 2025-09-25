@@ -148,7 +148,7 @@ void main() {
       });
 
       test('Order désérialisation JSON', () {
-        final jsonString = '''
+        const jsonString = '''
         {
           "total": 47.48,
           "date": "2024-12-01T10:30:00.000",
@@ -251,7 +251,7 @@ void main() {
       test('Commande avec des quantités très élevées', () {
         final highQuantityItem =
             OrderItem(product: testProduct1, quantity: 10000);
-        final expectedSubtotal = 10.99 * 10000;
+        const expectedSubtotal = 10.99 * 10000;
 
         expect(highQuantityItem.subtotal, expectedSubtotal);
 
