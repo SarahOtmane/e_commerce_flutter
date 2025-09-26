@@ -40,14 +40,13 @@
   },
   "hosting": [
     {
-      "site": "shopflutter-blue",
+      "site": "shopflutter",  
       "public": "build/web",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
-    },
-    {
-      "site": "shopflutter-green",
-      "public": "build/web",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ]
     }
   ]
 }
