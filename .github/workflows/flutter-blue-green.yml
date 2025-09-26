@@ -94,7 +94,7 @@ jobs:
             --expires 7d --json)
           echo "$DEPLOY_OUTPUT"
 
-          URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.result.channels[0].url // empty')
+          URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.result[] | .url // empty')
           if [ -z "$URL" ]; then
             echo "❌ Could not get channel URL. Deployment may have failed."
             exit 1
