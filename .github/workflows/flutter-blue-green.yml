@@ -75,8 +75,9 @@ jobs:
 
       - name: Pick channel (blue/green)
         id: pick
+        shell: bash
         run: |
-          if (( $GITHUB_RUN_NUMBER % 2 == 0 )); then
+          if [ $((GITHUB_RUN_NUMBER % 2)) -eq 0 ]; then
             echo "channel=blue" >> $GITHUB_OUTPUT
             echo "Deploying to channel: blue"
           else
