@@ -11,10 +11,6 @@ Une application e‑commerce Flutter Web (Android/iOS optionnel), MVVM/Clean, Fi
 3. [Tech Stack](#tech-stack)  
 4. [Installation et lancement](#installation-et-lancement)  
 5. [Configuration](#configuration)  
-6. [CI/CD et Déploiement](#cicd-et-déploiement)  
-7. [Tests](#tests)  
-8. [Architecture](#architecture)  
-9. [Licence](#licence)  
 
 ---
 
