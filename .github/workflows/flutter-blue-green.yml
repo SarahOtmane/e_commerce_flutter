@@ -123,8 +123,7 @@ jobs:
         if: steps.smoke.outputs.smoke_passed == 'true'
         run: |
           set -e
-          echo "🚀 Promoting channel to live"
-          firebase hosting:channel:deploy live \
+          echo "🚀 Promoting to live site"
+          firebase deploy --only hosting \
             --project ${{ secrets.FIREBASE_PROJECT_ID }} \
-            --token ${{ secrets.FIREBASE_TOKEN }} \
-            --expires 7d
+            --token ${{ secrets.FIREBASE_TOKEN }}
