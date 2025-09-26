@@ -94,11 +94,6 @@ class AppDrawer extends StatelessWidget {
                   title: const Text('Connexion'),
                   onTap: () => _go(context, '/login'),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.storefront),
-                  title: const Text('Boutique'),
-                  onTap: () => _go(context, '/catalog'),
-                ),
               ],
             ],
           ),

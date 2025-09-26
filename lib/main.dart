@@ -25,15 +25,6 @@ Future<void> main() async {
     await dotenv.load(fileName: ".env");
   }
 
-  // Vérification des clés pour debug
-  if (kIsWeb) {
-    print('Firebase API Key Web: ${EnvironmentConfig.firebaseApiKeyWeb}');
-    print('Stripe Publishable Key: ${EnvironmentConfig.stripePublishableKey}');
-  } else {
-    print('Firebase API Key Mobile: ${dotenv.env['FIREBASE_API_KEY']}');
-    print('Stripe Publishable Key Mobile: ${dotenv.env['publishableKey']}');
-  }
-
   // Charger les produits depuis le backend
   await fetchAndStoreProducts();
 
