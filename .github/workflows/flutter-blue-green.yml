@@ -93,27 +93,39 @@ jobs:
           set -e
           CHANNEL=${{ steps.pick.outputs.channel }}
           echo "Deploying to channel: $CHANNEL"
-
-          # Liste les channels existants
-          EXISTING_CHANNELS=$(firebase hosting:channel:list --project ${{ secrets.FIREBASE_PROJECT_ID }} --json)
+              
+          echo "Listing existing channels..."
+          EXISTING_CHANNELS=$(firebase hosting:channel:list --project ${{ secrets.FIREBASE_PROJECT_ID }} --json || true)
+          echo "$EXISTING_CHANNELS"
+              
+          # Vérifie si le channel existe
           CHANNEL_EXISTS=$(echo "$EXISTING_CHANNELS" | jq -r ".result[] | select(.id==\"$CHANNEL\") | .id")
-
+          echo "CHANNEL_EXISTS=$CHANNEL_EXISTS"
+              
           # Ouvre le channel seulement s'il n'existe pas
-          if [ -z "$CHANNEL_EXISTS" ]; then
+          if [ -z "$CHANNEL_EXISTS" ] || [ "$CHANNEL_EXISTS" = "null" ]; then
             echo "Channel $CHANNEL does not exist. Opening..."
-            firebase hosting:channel:open $CHANNEL --project ${{ secrets.FIREBASE_PROJECT_ID }}
+            OPEN_OUTPUT=$(firebase hosting:channel:open $CHANNEL --project ${{ secrets.FIREBASE_PROJECT_ID }} --json || true)
+            echo "$OPEN_OUTPUT"
           else
             echo "Channel $CHANNEL already exists."
           fi
-
-          # Déploiement du build
+              
+          # Déploie le build
+          echo "Deploying build to $CHANNEL..."
           DEPLOY_OUTPUT=$(firebase hosting:channel:deploy $CHANNEL \
             --project ${{ secrets.FIREBASE_PROJECT_ID }} \
-            --expires 7d --json)
+            --expires 7d --json || true)
           echo "$DEPLOY_OUTPUT"
-
-          # Récupération de l'URL du channel
-          URL=$(echo $DEPLOY_OUTPUT | jq -r '.result[] | select(.type=="hosting") | .url')
+              
+          # Vérifie si l'URL a été retournée
+          URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.result[] | select(.type=="hosting") | .url // empty')
+          if [ -z "$URL" ]; then
+            echo "❌ Could not get channel URL. Deployment may have failed."
+            exit 1
+          fi
+              
+          echo "✅ Deployment successful. Channel URL: $URL"
           echo "channel_url=$URL" >> $GITHUB_OUTPUT
 
       - name: Smoke test
