@@ -101,7 +101,7 @@ jobs:
         run: |
           set -e
           CHANNEL=${{ steps.pick.outputs.channel }}
-          echo "🚀 Deploying to channel: $CHANNEL"
+          echo "Deploying to channel: $CHANNEL"
 
           DEPLOY_OUTPUT=$(firebase hosting:channel:deploy $CHANNEL \
             --project ${{ secrets.FIREBASE_PROJECT_ID }} \
@@ -111,11 +111,11 @@ jobs:
 
           URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.result[] | .url // empty')
           if [ -z "$URL" ]; then
-            echo "❌ Could not get channel URL. Deployment may have failed."
+            echo "Could not get channel URL. Deployment may have failed."
             exit 1
           fi
 
-          echo "✅ Deployment successful. Channel URL: $URL"
+          echo "Deployment successful. Channel URL: $URL"
           echo "channel_url=$URL" >> $GITHUB_OUTPUT
 
       - name: Smoke test
@@ -123,15 +123,15 @@ jobs:
         run: |
           set -e
           URL=${{ steps.deploy.outputs.channel_url }}
-          echo "🌍 Testing $URL"
+          echo "Testing $URL"
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" $URL)
           if [ "$STATUS" -ne 200 ]; then
             echo "smoke_passed=false" >> $GITHUB_OUTPUT
-            echo "❌ Smoke test failed ($STATUS)"
+            echo "Smoke test failed ($STATUS)"
             exit 1
           else
             echo "smoke_passed=true" >> $GITHUB_OUTPUT
-            echo "✅ Smoke test passed"
+            echo "Smoke test passed"
           fi
 
       - name: Promote to live
