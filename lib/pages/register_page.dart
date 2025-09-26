@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import '../widgets/app_drawer.dart';
+import '../services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -17,6 +19,18 @@ class _RegisterPageState extends State<RegisterPage> {
 
   String? _errorMessage;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Rediriger si déjà connecté
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      if (authService.isAuthenticated) {
+        Navigator.pushReplacementNamed(context, '/');
+      }
+    });
+  }
 
   Future<void> _register() async {
     setState(() {

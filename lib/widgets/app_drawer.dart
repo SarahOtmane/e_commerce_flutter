@@ -85,6 +85,11 @@ class AppDrawer extends StatelessWidget {
                 ),
               ] else ...[
                 ListTile(
+                  leading: const Icon(Icons.home),
+                  title: const Text('Accueil'),
+                  onTap: () => _go(context, '/'),
+                ),
+                ListTile(
                   leading: const Icon(Icons.person_add),
                   title: const Text('Créer un compte'),
                   onTap: () => _go(context, '/register'),
@@ -93,11 +98,6 @@ class AppDrawer extends StatelessWidget {
                   leading: const Icon(Icons.login),
                   title: const Text('Connexion'),
                   onTap: () => _go(context, '/login'),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.storefront),
-                  title: const Text('Boutique'),
-                  onTap: () => _go(context, '/catalog'),
                 ),
               ],
             ],

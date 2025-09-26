@@ -43,6 +43,21 @@ jobs:
       - name: Run tests
         run: flutter test --coverage
 
+      - name: Check coverage ≥50%
+        run: |
+          TOTAL=$(lcov --summary coverage/lcov.info | grep lines | awk '{print $2}' | sed 's/%//')
+          echo "Total coverage: $TOTAL%"
+          if (( $(echo "$TOTAL < 50" | bc -l) )); then
+            echo "❌ Coverage too low (<50%)"
+            exit 1
+          fi
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
       - name: Build Flutter Web
         run: flutter build web --release --dart-define=FIREBASE_API_KEY_WEB=${{ secrets.FIREBASE_API_KEY_WEB }} --dart-define=FIREBASE_AUTH_DOMAIN_WEB=${{ secrets.FIREBASE_AUTH_DOMAIN_WEB }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }} --dart-define=FIREBASE_APP_ID_WEB=${{ secrets.FIREBASE_APP_ID_WEB }} --dart-define=FIREBASE_MEASUREMENT_ID_WEB=${{ secrets.FIREBASE_MEASUREMENT_ID_WEB }} --dart-define=FIREBASE_MESSAGING_SENDER_ID_WEB=${{ secrets.FIREBASE_MESSAGING_SENDER_ID_WEB }} --dart-define=STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}
 
@@ -86,7 +101,7 @@ jobs:
         run: |
           set -e
           CHANNEL=${{ steps.pick.outputs.channel }}
-          echo "🚀 Deploying to channel: $CHANNEL"
+          echo "Deploying to channel: $CHANNEL"
 
           DEPLOY_OUTPUT=$(firebase hosting:channel:deploy $CHANNEL \
             --project ${{ secrets.FIREBASE_PROJECT_ID }} \
@@ -96,11 +111,11 @@ jobs:
 
           URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.result[] | .url // empty')
           if [ -z "$URL" ]; then
-            echo "❌ Could not get channel URL. Deployment may have failed."
+            echo "Could not get channel URL. Deployment may have failed."
             exit 1
           fi
 
-          echo "✅ Deployment successful. Channel URL: $URL"
+          echo "Deployment successful. Channel URL: $URL"
           echo "channel_url=$URL" >> $GITHUB_OUTPUT
 
       - name: Smoke test
@@ -108,15 +123,15 @@ jobs:
         run: |
           set -e
           URL=${{ steps.deploy.outputs.channel_url }}
-          echo "🌍 Testing $URL"
+          echo "Testing $URL"
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" $URL)
           if [ "$STATUS" -ne 200 ]; then
             echo "smoke_passed=false" >> $GITHUB_OUTPUT
-            echo "❌ Smoke test failed ($STATUS)"
+            echo "Smoke test failed ($STATUS)"
             exit 1
           else
             echo "smoke_passed=true" >> $GITHUB_OUTPUT
-            echo "✅ Smoke test passed"
+            echo "Smoke test passed"
           fi
 
       - name: Promote to live

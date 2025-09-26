@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'catalogue_page.dart';
 import '../widgets/app_drawer.dart';
-import 'cart_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,10 +13,7 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.shopping_cart),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CartPage()),
-              );
+              Navigator.pushNamed(context, '/cart');
             },
           ),
         ],
@@ -52,11 +47,7 @@ class HomePage extends StatelessWidget {
                 icon: const Icon(Icons.list),
                 label: const Text('Voir le catalogue'),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CataloguePage()),
-                  );
+                  Navigator.pushNamed(context, '/catalog');
                 },
                 style: ElevatedButton.styleFrom(
                   padding:
@@ -69,10 +60,7 @@ class HomePage extends StatelessWidget {
                 icon: const Icon(Icons.shopping_cart),
                 label: const Text('Voir mon panier'),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const CartPage()),
-                  );
+                  Navigator.pushNamed(context, '/cart');
                 },
                 style: ElevatedButton.styleFrom(
                   padding:
