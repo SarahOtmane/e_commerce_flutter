@@ -69,12 +69,6 @@ jobs:
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
-      - name: Setup Firebase Service Account
-        run: |
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}" > serviceAccountKey.json
-          export GOOGLE_APPLICATION_CREDENTIALS=$PWD/serviceAccountKey.json
-          echo "Service account JSON saved"
-
       - name: Pick channel (blue/green)
         id: pick
         shell: bash
@@ -89,16 +83,26 @@ jobs:
 
       - name: Deploy to inactive channel
         id: deploy
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/serviceAccountKey.json
         run: |
-          set -e
+          # Écrire le service account dans un fichier
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}" > $GOOGLE_APPLICATION_CREDENTIALS
+
           CHANNEL=${{ steps.pick.outputs.channel }}
           echo "Deploying to channel: $CHANNEL"
 
           # Liste les channels existants
-          firebase hosting:channel:list --project ${{ secrets.FIREBASE_PROJECT_ID }}
+          EXISTING_CHANNELS=$(firebase hosting:channel:list --project ${{ secrets.FIREBASE_PROJECT_ID }} --json)
+          CHANNEL_EXISTS=$(echo "$EXISTING_CHANNELS" | jq -r ".result[] | select(.id==\"$CHANNEL\") | .id")
 
-          # Ouvre le channel (optionnel)
-          firebase hosting:channel:open $CHANNEL --project ${{ secrets.FIREBASE_PROJECT_ID }}
+          # Ouvre le channel seulement s'il n'existe pas
+          if [ -z "$CHANNEL_EXISTS" ]; then
+            echo "Channel $CHANNEL does not exist. Opening..."
+            firebase hosting:channel:open $CHANNEL --project ${{ secrets.FIREBASE_PROJECT_ID }}
+          else
+            echo "Channel $CHANNEL already exists."
+          fi
 
           # Déploiement du build
           DEPLOY_OUTPUT=$(firebase hosting:channel:deploy $CHANNEL \
