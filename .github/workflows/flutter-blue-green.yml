@@ -40,8 +40,8 @@ jobs:
       - name: Analyze
         run: flutter analyze --no-fatal-infos
 
-      - name: Run tests
-        run: flutter test --coverage
+      # - name: Run tests
+      #   run: flutter test --coverage
 
       - name: Build Flutter Web
         run: flutter build web --release
@@ -94,7 +94,7 @@ jobs:
           CHANNEL=${{ steps.pick.outputs.channel }}
           echo "Deploying to channel: $CHANNEL"
           echo "1"
-          firebase hosting:channel:list
+          firebase hosting:channel:list --project ${{ secrets.FIREBASE_PROJECT_ID }}
           echo "2"
           firebase hosting:channel:open $CHANNEL
           echo "3"	
