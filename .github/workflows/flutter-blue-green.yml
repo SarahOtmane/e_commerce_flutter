@@ -76,13 +76,13 @@ jobs:
       - name: Pick channel (blue/green)
         id: pick
         run: |
-          if [ $(( $GITHUB_RUN_NUMBER % 2 )) -eq 0 ]; then
-            CHANNEL="blue"
+          if (( $GITHUB_RUN_NUMBER % 2 == 0 )); then
+            echo "channel=blue" >> $GITHUB_OUTPUT
+            echo "Deploying to channel: blue"
           else
-            CHANNEL="green"
+            echo "channel=green" >> $GITHUB_OUTPUT
+            echo "Deploying to channel: green"
           fi
-          echo "channel=$CHANNEL" >> $GITHUB_OUTPUT
-          echo "Deploying to channel: $CHANNEL"
 
       - name: Deploy to inactive channel
         id: deploy
