@@ -94,15 +94,15 @@ jobs:
           CHANNEL=${{ steps.pick.outputs.channel }}
           echo "Deploying to channel: $CHANNEL"
           echo "1"
-          firebase hosting:channel:list --project ${{ secrets.FIREBASE_PROJECT_ID }}
+          firebase hosting:channel:list --project ${{ secrets.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
           echo "2"
-          firebase hosting:channel:open $CHANNEL
-          echo "3"	
+          firebase hosting:channel:open $CHANNEL --token ${{ secrets.FIREBASE_TOKEN }}
+          echo "3"
           DEPLOY_OUTPUT=$(firebase hosting:channel:deploy $CHANNEL \
             --project ${{ secrets.FIREBASE_PROJECT_ID }} \
-            --expires 7d --json)
+            --expires 7d --json \
+            --token ${{ secrets.FIREBASE_TOKEN }})
           echo "$DEPLOY_OUTPUT"
-          # Récupérer l'URL du channel
           URL=$(echo $DEPLOY_OUTPUT | jq -r '.result[] | select(.type=="hosting") | .url')
           echo "channel_url=$URL" >> $GITHUB_OUTPUT
 
