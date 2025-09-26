@@ -1,4 +1,4 @@
-name: Flutter CI/CD → Firebase Blue-Green (Service Account, Safe Promote)
+name: Flutter CI/CD → Firebase Blue-Green
 
 on:
   push:
@@ -57,9 +57,11 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v4
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
           name: web-build
           path: build/web
@@ -88,17 +90,21 @@ jobs:
       - name: Deploy to inactive channel
         id: deploy
         run: |
+          set -e
           CHANNEL=${{ steps.pick.outputs.channel }}
+          echo "Deploying to channel: $CHANNEL"
           DEPLOY_OUTPUT=$(firebase hosting:channel:deploy $CHANNEL \
             --project ${{ secrets.FIREBASE_PROJECT_ID }} \
             --expires 7d --json)
           echo "$DEPLOY_OUTPUT"
+          # Récupérer l'URL du channel
           URL=$(echo $DEPLOY_OUTPUT | jq -r '.result[] | select(.type=="hosting") | .url')
           echo "channel_url=$URL" >> $GITHUB_OUTPUT
 
       - name: Smoke test
         id: smoke
         run: |
+          set -e
           URL=${{ steps.deploy.outputs.channel_url }}
           echo "Testing $URL"
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" $URL)
@@ -114,5 +120,8 @@ jobs:
       - name: Promote to live
         if: steps.smoke.outputs.smoke_passed == 'true'
         run: |
+          set -e
+          echo "Promoting channel to live"
           firebase hosting:channel:deploy live \
-            --project ${{ secrets.FIREBASE_PROJECT_ID }}
+            --project ${{ secrets.FIREBASE_PROJECT_ID }} \
+            --expires 7d
