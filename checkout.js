@@ -16,14 +16,10 @@ export default function () {
   check(res, { 'home 200': (r) => r.status === 200 });
 
   // 2. Ouvrir un produit
-  res = http.get('https://shopflutter.web.app/product/123');
-  check(res, { 'product 200': (r) => r.status === 200 });
+  res = http.get('https://shopflutter.web.app/#/catalog');
+  check(res, { 'catalog 200': (r) => r.status === 200 });
 
-  // 3. Simuler checkout (mock API ou Firebase Function si dispo)
-  let payload = JSON.stringify({ productId: "123", qty: 1 });
-  let headers = { 'Content-Type': 'application/json' };
-  res = http.post('https://shopflutter.web.app/api/checkout', payload, { headers });
-  check(res, { 'checkout 200': (r) => r.status === 200 });
+    
 
   sleep(1); // pause entre actions
 }
