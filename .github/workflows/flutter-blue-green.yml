@@ -142,3 +142,11 @@ jobs:
           firebase deploy --only hosting \
             --project ${{ secrets.FIREBASE_PROJECT_ID }} \
             --token ${{ secrets.FIREBASE_TOKEN }}
+  load-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install k6
+        run: sudo snap install k6
+      - name: Run k6 load test
+        run: k6 run checkout.js
