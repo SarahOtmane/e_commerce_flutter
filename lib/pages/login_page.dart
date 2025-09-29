@@ -136,6 +136,26 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: _login,
                         child: const Text('Se connecter'),
                       ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+                    final authService =
+                        Provider.of<AuthService>(context, listen: false);
+                    final user = await authService.signInWithGoogle();
+                    if (user != null) {
+                      if (mounted) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushReplacementNamed(context, '/');
+                      }
+                    } else {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Échec connexion Google")),
+                      );
+                    }
+                  },
+                  child: const Text("Se connecter avec Google"),
+                ),
               ],
             ),
           ),
